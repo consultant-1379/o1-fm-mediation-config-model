@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- *******************************************************************************
+    * COPYRIGHT Ericsson LMI 2023. All rights reserved. * * No part of this document
+    may be reproduced in any form without the * written permission of the copyright
+    owner.The contents of this document * are subject to revision without notice
+    due to continued progress in * methodology, design and manufacturing. Ericsson
+    shall have no liability * for any error or damage of any kind resulting from
+    the use of this document.
+    * ******************************************************************************* -->
+<handler:HandlerTypeDefinition oss_common:ns="O1"
+    oss_common:name="IsNodeSuspendedHandler" oss_common:version="1.0.0"
+    xmlns:flow="urn:com:ericsson:schema:xml:oss:fbp_flow"
+    xmlns:handler="urn:com:ericsson:schema:xml:oss:fbp_handlertype"
+    xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <oss_common:modelCreationInfo author="TeamAmerica/Doozers"
+        creationDate="15/08/2023">
+        <oss_common:designedModel componentId="IsNodeSuspendedHandler"/>
+    </oss_common:modelCreationInfo>
+
+    <oss_common:desc>Handler is responsible for verifying if O1 Node is suspended or not, and setting the appropriate flag in the header (isNodeSuspended)</oss_common:desc>
+
+    <flow:handler>
+        <flow:className>com.ericsson.oss.mediation.fm.o1.handlers.IsNodeSuspendedHandler</flow:className>
+    </flow:handler>
+
+</handler:HandlerTypeDefinition>
+
+

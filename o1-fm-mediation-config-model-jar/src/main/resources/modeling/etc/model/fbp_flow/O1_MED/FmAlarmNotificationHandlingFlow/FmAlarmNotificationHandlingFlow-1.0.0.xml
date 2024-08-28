@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- *******************************************************************************
+    * COPYRIGHT Ericsson LMI 2023. All rights reserved. * * No part of this document
+    may be reproduced in any form without the * written permission of the copyright
+    owner.The contents of this document * are subject to revision without notice
+    due to continued progress in * methodology, design and manufacturing. Ericsson
+    shall have no liability * for any error or damage of any kind resulting from
+    the use of this document.
+    * ******************************************************************************* -->
+<flow:FlowDefinition oss_common:lifeCycle="CURRENT"
+                     oss_common:name="FmAlarmNotificationHandlingFlow" oss_common:ns="O1_MED" oss_common:version="1.0.0"
+                     synchronicity="SYNCHRONOUS" xmlns:flow="urn:com:ericsson:schema:xml:oss:fbp_flow"
+                     xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common"
+>
+
+    <oss_common:modelCreationInfo author="TeamAmerica/Doozers"
+                                  creationDate="16/11/2023">
+        <oss_common:designedModel componentId="NotificationHandlingFlow-model"/>
+    </oss_common:modelCreationInfo>
+
+    <oss_common:desc>
+        Flow model responsible for O1 alarm handling. O1 nodes are expected to support alarm
+        notifications over O1.
+
+        Notifications received from the node will be handled via JMS triggered flows. A JMS
+        flow is configured for the 'O1FmNotifications' queue to handle notifications over O1.
+
+        The mediation engine is responsible for configuring the consumer for JMS triggered flows.
+        The flow must be initialized in order for mediation to configure the consumer.
+
+        The JMS consumer for the O1FmNotifications is initialized by the mediation service when
+        the service starts up and reads the "med_service_startup_activation_flowurns" jvm
+        property configured in the mssnmpfm service group jboss-as.conf file.
+    </oss_common:desc>
+
+
+    <!-- O1 FM channel for receiving alarms -->
+    <flow:input name="o1_notifications_channelId">
+        <flow:attribute name="o1_notifications_channelId" source="config:sfwk"/>
+        <flow:attribute name="selector"
+                        source="config:__target_ms_instance='{{com.ericsson.oss.sdk.node.identifier}}'"/>
+        <flow:attribute name="mapJmsMessage" source="config:false"/>
+        <flow:attribute name="concurrentConsumers" source="config:1"/>
+        <flow:attribute name="maxConcurrentConsumers" source="config:1"/>
+        <flow:attribute name="deliveryPersistent" source="config:false"/>
+        <flow:attribute name="acknowledgementModeName" source="config:AUTO_ACKNOWLEDGE"/>
+    </flow:input>
+
+    <!-- O1 Handlers -->
+    <flow:step name="IsNodeSuspendedHandler">
+        <flow:handlerTypeRef uri="model://O1/IsNodeSuspendedHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="AlarmTransformerHandler">
+        <flow:handlerTypeRef uri="model://O1/AlarmTransformerHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="EventNotificationDispatchHandler">
+        <flow:handlerTypeRef uri="model://O1/EventNotificationDispatchHandler/1.0.0"/>
+    </flow:step>
+
+    <!-- O1 path for JMS invocation from node -->
+    <flow:path transaction="NOT_SUPPORTED">
+        <flow:from uri="jms:o1_notifications_channelId"/>
+        <flow:to uri="IsNodeSuspendedHandler"/>
+        <flow:choice>
+            <flow:to uri="AlarmTransformerHandler">
+                <flow:when>isNodeSuspended=false</flow:when>
+            </flow:to>
+            <flow:to uri="EventNotificationDispatchHandler">
+                <flow:when>isNodeSuspended=false</flow:when>
+            </flow:to>
+        </flow:choice>
+    </flow:path>
+
+    <!-- SNMP capability ensures that correct mediation instance is selected by mediation policies. -->
+    <!-- O1 nodes use the same mediation instance as SNMP based nodes. -->
+    <flow:capabilities>
+        <flow:requiredCapability name="SNMP"/>
+    </flow:capabilities>
+
+</flow:FlowDefinition>

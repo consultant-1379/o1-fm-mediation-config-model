@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ericsson.nms</groupId>
+        <artifactId>integration</artifactId>
+        <version>15.2.0.40</version>
+    </parent>
+
+    <groupId>com.ericsson.oss.mediation.fm.models.configurations</groupId>
+    <artifactId>o1-fm-mediation-config-model</artifactId>
+    <version>1.19.2-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+    <name>[${project.artifactId}] Model Project</name>
+    <description>FM Mediation Configuration Model Project for the O1 Platform.</description>
+
+    <modules>
+        <module>o1-cache-model-jar</module>
+        <module>o1-fm-mediation-config-model-jar</module>
+        <module>ERICo1fmmediationconfigmodel_CXP9043316</module>
+    </modules>
+
+    <properties>
+        <version.modeling-bom>22.0.35</version.modeling-bom>
+        <version.model-processing.plugin>2.0.9</version.model-processing.plugin>
+        <version.model-deployment-tool>10.9.6</version.model-deployment-tool>
+        <version.build.helper>3.4.0</version.build.helper>
+        <version.maven.dependency>3.5.0</version.maven.dependency>
+        <version.service.framework>3.27.2</version.service.framework>
+        <ericsson.scm.url>
+            scm:git:[fetch=]ssh://gerrit-gamma-read.seli.gic.ericsson.se:29418/OSS/ENM-Parent/SQ-Gate/com.ericsson.oss.mediation.fm.models.configurations/o1-fm-mediation-config-model[push=]ssh://gerrit-gamma.gic.ericsson.se:29418/OSS/ENM-Parent/SQ-Gate/com.ericsson.oss.mediation.fm.models.configurations/o1-fm-mediation-config-model
+        </ericsson.scm.url>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                <artifactId>Modeling-BOM</artifactId>
+                <version>${version.modeling-bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                <artifactId>ServiceFrameworkJBossBOM</artifactId>
+                <version>${version.service.framework}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <scm>
+        <connection>${ericsson.scm.url}</connection>
+        <developerConnection>${ericsson.scm.url}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+</project>

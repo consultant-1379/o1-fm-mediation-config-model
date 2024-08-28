@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- *******************************************************************************
+  * COPYRIGHT Ericsson LMI 2023. All rights reserved. * * No part of this document
+  may be reproduced in any form without the * written permission of the copyright
+  owner.The contents of this document * are subject to revision without notice
+  due to continued progress in * methodology, design and manufacturing. Ericsson
+  shall have no liability * for any error or damage of any kind resulting from
+  the use of this document.
+  * ******************************************************************************* -->
+<flow:FlowDefinition oss_common:lifeCycle="CURRENT" oss_common:name="FmAlarmSyncFlow" oss_common:ns="O1_MED"
+                     oss_common:version="1.0.0" synchronicity="SYNCHRONOUS"
+                     xmlns:flow="urn:com:ericsson:schema:xml:oss:fbp_flow"
+                     xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common"
+>
+
+    <oss_common:modelCreationInfo author="TeamAmerica/Doozers" creationDate="21/08/2023">
+        <oss_common:designedModel componentId="o1-fm-flow-model"/>
+    </oss_common:modelCreationInfo>
+
+    <oss_common:desc>Flow model responsible for performing an alarm synch towards O1Node types.
+    </oss_common:desc>
+
+    <flow:input name="O1AlarmSyncFlow"/>
+
+    <flow:step name="ReadAlarmListHandler">
+        <flow:handlerTypeRef uri="model://O1/ReadAlarmListHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="AlarmListTransformerHandler">
+        <flow:handlerTypeRef uri="model://O1/AlarmListTransformerHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="ReadManagedElementIdHandler">
+        <flow:handlerTypeRef uri="model://O1/ReadManagedElementIdHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="EventNotificationDispatchHandler">
+        <flow:handlerTypeRef uri="model://O1/EventNotificationDispatchHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="TlsCredentialsManagerHandler">
+        <flow:handlerTypeRef uri="model://MEDIATION/TlsCredentialsManagerHandler/1.0.0"/>
+    </flow:step>
+
+    <flow:step name="SshCredentialsManagerHandler">
+        <flow:handlerTypeRef uri="model://MEDIATION/SshCredentialsManagerHandler/1.0.0"/>
+        <flow:attribute name="mediationTaskRequest" source="request:mediationTaskRequest"/>
+    </flow:step>
+
+    <flow:step name="NetconfSessionBuilderHandler">
+        <flow:handlerTypeRef uri="model://MEDIATION/NetconfSessionBuilderHandler/1.0.0"/>
+        <flow:attribute name="sessionMode" value="SHORT_LIFE"/>
+        <flow:attribute name="transportSocketTimeout" value="200000"/>
+        <flow:attribute name="xaResourceProvider" value="YANG_READ"/>
+    </flow:step>
+
+    <flow:step name="NetconfSessionReleaserHandler">
+        <flow:handlerTypeRef uri="model://MEDIATION/NetconfSessionReleaserHandler/1.0.0"/>
+    </flow:step>
+
+
+
+    <flow:path transaction="REQUIRED">
+        <flow:from uri="direct:O1AlarmSyncFlow"/>
+            <flow:to uri="TlsCredentialsManagerHandler"/>
+            <flow:to uri="SshCredentialsManagerHandler"/>
+            <flow:to uri="NetconfSessionBuilderHandler"/>
+            <flow:to uri="ReadManagedElementIdHandler"/>
+            <flow:to uri="ReadAlarmListHandler"/>
+            <flow:to uri="NetconfSessionReleaserHandler"/>
+            <flow:to uri="AlarmListTransformerHandler"/>
+            <flow:to uri="EventNotificationDispatchHandler"/>
+    </flow:path>
+
+    <flow:capabilities>
+        <flow:requiredCapability name="SNMP"/>
+    </flow:capabilities>
+
+</flow:FlowDefinition>

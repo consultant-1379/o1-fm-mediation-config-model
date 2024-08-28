@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<handler:HandlerTypeDefinition oss_common:ns="O1" oss_common:name="FmSupervisionServiceStateHandler" oss_common:version="1.0.0"
+    xmlns:flow="urn:com:ericsson:schema:xml:oss:fbp_flow" xmlns:handler="urn:com:ericsson:schema:xml:oss:fbp_handlertype"
+    xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <oss_common:modelCreationInfo author="TeamAmerica" creationDate="28/06/2023">
+        <oss_common:designedModel componentId="FmSupervisionServiceStateHandler"/>
+    </oss_common:modelCreationInfo>
+
+    <oss_common:desc>Handler model for an alarm Supervision ON/OFF request processing for O1Node network element.</oss_common:desc>
+
+    <flow:handler>
+
+        <flow:className>com.ericsson.oss.mediation.fm.o1.handlers.FmSupervisionServiceStateHandler</flow:className>
+
+        <flow:attributeDef oss_common:name="fdn">
+            <oss_common:desc>Fully distinguished name of the Supervision MO.</oss_common:desc>
+            <oss_common:type xsi:type="oss_common:stringType"/>
+            <flow:source uri="dps:fdn"/>
+        </flow:attributeDef>
+        <flow:attributeDef oss_common:name="active">
+            <oss_common:desc>Status of Supervision.</oss_common:desc>
+            <oss_common:type xsi:type="oss_common:booleanType"/>
+            <flow:source uri="dps:active"/>
+        </flow:attributeDef>
+
+    </flow:handler>
+
+</handler:HandlerTypeDefinition>
+
+

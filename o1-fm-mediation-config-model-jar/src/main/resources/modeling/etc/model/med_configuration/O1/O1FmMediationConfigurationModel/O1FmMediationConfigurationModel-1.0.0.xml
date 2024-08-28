@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ******************************************************************************
+     * * COPYRIGHT Ericsson 2023
+     * * The copyright to the computer program(s) herein is the property of
+     * Ericsson Inc. The programs may be used and/or copied only with written
+     * permission from Ericsson Inc. or in accordance with the terms and
+     * conditions stipulated in the agreement/contract under which the
+     * program(s) have been supplied.
+     ******************************************************************************* -->
+<med_configuration:MediationConfigurationDefinition oss_common:lifeCycle="CURRENT"
+                                                    oss_common:name="O1FmMediationConfigurationModel" oss_common:ns="O1"
+                                                    oss_common:version="1.0.0"
+                                                    xmlns:med_configuration="urn:com:ericsson:schema:xml:oss:med_configuration"
+                                                    xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common"
+                                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <oss_common:modelCreationInfo author="Team America" creationDate="03/05/2023">
+        <oss_common:designedModel componentId="o1-fm-mediation-config-jar"/>
+    </oss_common:modelCreationInfo>
+
+    <oss_common:desc>Mediation configuration for O1 platform nodes</oss_common:desc>
+
+    <med_configuration:flowInvocation flowUrn="//O1_MED/FmAlarmSyncFlow/1.0.0">
+        <med_configuration:eventBasedInvocation eventTypeUrn="//global/FmMediationAlarmSyncRequest/1.0.0"/>
+    </med_configuration:flowInvocation>
+
+    <!-- Handle FmMediationHeartBeatRequest when heartbeat alarm is raised/cleared.
+         No action required for O1 nodes. -->
+    <med_configuration:flowInvocation flowUrn="//NED/NoOperationFlow/1.0.0">
+        <med_configuration:eventBasedInvocation eventTypeUrn="//global/FmMediationHeartBeatRequest/1.0.0"/>
+    </med_configuration:flowInvocation>
+
+    <!-- Handle FmSupervisionRecoveryTaskRequest when recovery is required.
+         Recovery is required in various scenarios, including but not limited to
+           * Complete Network Recovery (for example in case of  ENM reboot)
+           * 30 minutes after upgrade
+           * There is a delta between number / count of supervised nodes in the database and fm-router-policy
+           * Discrepancies found between supervision state and subscription state
+
+         FmSupervisionFlow supports idempotency, so it can be triggered in such cases to attempt recovery.
+    -->
+    <med_configuration:flowInvocation flowUrn="//O1_MED/FmSupervisionFlow/1.0.0">
+        <med_configuration:eventBasedInvocation eventTypeUrn="//global/FmSupervisionRecoveryTaskRequest/1.0.0"/>
+    </med_configuration:flowInvocation>
+
+    <med_configuration:supervisionConfiguration flowUrn="//O1_MED/FmSupervisionFlow/1.0.0" id="fmAlarmSupervisionCbp"
+                                                supervisionTypeUrn="//OSS_NE_FM_DEF/FmAlarmSupervision/1.1.0">
+        <med_configuration:parentMoType primaryTypeUrn="//OSS_NE_DEF/NetworkElement/*"/>
+    </med_configuration:supervisionConfiguration>
+
+</med_configuration:MediationConfigurationDefinition>
